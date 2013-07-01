@@ -28,6 +28,9 @@ command :munger do |c|
     files.reject! {|e| !e.end_with?("mp4")}
     files.each do |file|
       xmlfile = file.gsub(/mp4$/,"xml")
+      
+      break unless File.exists?(xmlfile)
+      
       f = File.open(xmlfile)
       doc = Nokogiri::XML(f)
       f.close
