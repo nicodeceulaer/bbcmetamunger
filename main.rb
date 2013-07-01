@@ -53,7 +53,7 @@ command :munger do |c|
       else
         d = DateTime.parse metadata.firstbcast
         metadata.season = d.year
-        metadata.episode = 
+        metadata.episode = d.cweek
       end
       metadata.category = doc.xpath("//categories").text.split(",").first
       
@@ -82,7 +82,7 @@ command :munger do |c|
       end
       
       p "mp4tags -network '#{metadata.channel}' -description '#{metadata.descmedium}' -type #{metadata.mediatype} -genre '#{metadata.category}' -song '#{metadata.title}' -artist '#{metadata.longname}' -show '#{metadata.longname}' #{file}"
-      `mp4tags -network '#{metadata.channel}' -description "#{metadata.descmedium}" -type #{metadata.mediatype} -genre '#{metadata.category}' -song "#{metadata.title}" -artist "#{metadata.longname}" -show "#{metadata.longname}" -year #{metadata.firstbcast} #{file}`
+      `mp4tags -network '#{metadata.channel}' -description "#{metadata.descmedium}" -type #{metadata.mediatype} -genre '#{metadata.category}' -song "#{metadata.title}" -artist "#{metadata.longname}" -show "#{metadata.longname}" -episode #{metadata.episode} -year #{metadata.firstbcast} #{file}`
       
       if metadata.thumbnail_file
         p "mp4art --add #{metadata.thumbnail_file.to_path} #{file}"
