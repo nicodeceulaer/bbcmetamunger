@@ -82,7 +82,7 @@ command :munger do |c|
       end
       
       p "mp4tags -network '#{metadata.channel}' -description '#{metadata.descmedium}' -type #{metadata.mediatype} -genre '#{metadata.category}' -song '#{metadata.title}' -artist '#{metadata.longname}' -show '#{metadata.longname}' #{file}"
-      `mp4tags -network '#{metadata.channel}' -description "#{metadata.descmedium}" -type #{metadata.mediatype} -genre '#{metadata.category}' -song "#{metadata.title}" -artist "#{metadata.longname}" -show "#{metadata.longname}" -episode #{metadata.episode} -year #{metadata.firstbcast} #{file}`
+      `mp4tags -network '#{metadata.channel}' -description "#{metadata.descmedium}" -type #{metadata.mediatype} -genre '#{metadata.category}' -song "#{metadata.title}" -artist "#{metadata.longname}" -show "#{metadata.longname}" -episode #{metadata.episode} -year #{metadata.firstbcast} -season #{metadata.season} -longdesc "#{metadata.desclong}" #{file}`
       
       if metadata.thumbnail_file
         p "mp4art --add #{metadata.thumbnail_file.to_path} #{file}"
