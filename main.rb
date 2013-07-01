@@ -49,7 +49,7 @@ command :munger do |c|
       if metadata.senum
         metadata.senum[/s(\d{2})e(\d{2})/]
         metadata.season = $1
-        metadata.episode = $1
+        metadata.episode = $2
       else
         d = DateTime.parse metadata.firstbcast
         metadata.season = d.year
