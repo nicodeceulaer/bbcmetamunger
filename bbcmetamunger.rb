@@ -72,7 +72,7 @@ command :munger do |c|
         metadata.mediatype = doc.xpath("//categories").text.split(",").include?("Films") ? 9 : 10
 
       
-        if metadata.thumbnail
+        if metadata.thumbnail & !options.skipart
           url = URI.parse(metadata.thumbnail)
           Net::HTTP.start(url.host, url.port) {|http|
              resp = http.get(url.path)
