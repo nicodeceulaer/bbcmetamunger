@@ -85,21 +85,21 @@ command :munger do |c|
         end
       
         if options.convert
-          p "HandBrakeCLI -i #{file} -o #{file.gsub(/mp4$/, '.m4v')} -Z '#{options.preset}'"
-          `HandBrakeCLI -i #{file} -o #{file.gsub(/mp4$/, '.m4v')} -Z "AppleTV 2"` unless options.dryrun
+          p "HandBrakeCLI -i '#{file}' -o #{file.gsub(/mp4$/, '.m4v')} -Z '#{options.preset}'"
+          `HandBrakeCLI -i "#{file}" -o "#{file.gsub(/mp4$/, '.m4v')}" -Z "AppleTV 2"` unless options.dryrun
           if options.deleteorig
             p "rm #{file}"
-            `rm #{file}` unless options.dryrun
+            `rm "#{file}"` unless options.dryrun
           end
           file = file.gsub(/mp4$/, '.m4v')
         end
       
-        p "mp4tags -network '#{metadata.channel}' -description '#{metadata.descmedium}' -type #{metadata.mediatype} -genre '#{metadata.category}' -song '#{metadata.title}' -artist '#{metadata.longname}' -show '#{metadata.longname}' -episode #{metadata.episode} -year #{metadata.firstbcast} -season #{metadata.season.to_i} -longdesc '#{metadata.desclong}' -track #{metadata.episode} #{file}"
-        `mp4tags -network '#{metadata.channel}' -description "#{metadata.descmedium}" -type #{metadata.mediatype} -genre '#{metadata.category}' -song "#{metadata.title}" -artist "#{metadata.longname}" -show "#{metadata.longname}" -episode #{metadata.episode} -year #{metadata.firstbcast} -season #{metadata.season} -longdesc "#{metadata.desclong}" -track #{metadata.episode} #{file}` unless options.dryrun
+        p "mp4tags -network '#{metadata.channel}' -description '#{metadata.descmedium}' -type #{metadata.mediatype} -genre '#{metadata.category}' -song '#{metadata.title}' -artist '#{metadata.longname}' -show '#{metadata.longname}' -episode #{metadata.episode} -year #{metadata.firstbcast} -season #{metadata.season.to_i} -longdesc '#{metadata.desclong}' -track #{metadata.episode} '#{file}'"
+        `mp4tags -network '#{metadata.channel}' -description "#{metadata.descmedium}" -type #{metadata.mediatype} -genre '#{metadata.category}' -song "#{metadata.title}" -artist "#{metadata.longname}" -show "#{metadata.longname}" -episode #{metadata.episode} -year #{metadata.firstbcast} -season #{metadata.season} -longdesc "#{metadata.desclong}" -track #{metadata.episode} "#{file}"` unless options.dryrun
       
         if metadata.thumbnail_file and !options.skipart
-          p "mp4art --add #{metadata.thumbnail_file.to_path} #{file}"
-          `mp4art --add #{metadata.thumbnail_file.to_path} #{file}` unless options.dryrun
+          p "mp4art --add #{metadata.thumbnail_file.to_path} '#{file}'"
+          `mp4art --add #{metadata.thumbnail_file.to_path} "#{file}"` unless options.dryrun
         end
       end
     end
