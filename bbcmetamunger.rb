@@ -86,7 +86,7 @@ command :munger do |c|
       
         if options.convert
           p "HandBrakeCLI -i '#{file}' -o #{file.gsub(/mp4$/, '.m4v')} -Z '#{options.preset}'"
-          `HandBrakeCLI -i "#{file}" -o "#{file.gsub(/mp4$/, '.m4v')}" -Z "AppleTV 2"` unless options.dryrun
+          `HandBrakeCLI -i "#{file}" -o "#{file.gsub(/mp4$/, 'm4v')}" -Z "#{options.preset}"` unless options.dryrun
           if options.deleteorig
             p "rm #{file}"
             `rm "#{file}"` unless options.dryrun
