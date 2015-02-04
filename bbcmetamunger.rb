@@ -11,7 +11,7 @@ require 'ostruct'
 
 program :version, '0.0.1'
 program :description, 'combine bbc downloads'
- 
+
 command :munger do |c|
   c.syntax = 'bbcmetamunger munger [options]'
   c.summary = ''
@@ -29,25 +29,25 @@ command :munger do |c|
     options.default :preset => "AppleTV 2"
     options.default :skipart => false
     options.default :dryrun => false
-    
+
     p options
-    
+
     files = args.clone
     files.reject! {|e| !e.end_with?("mp4")}
     files.each do |file|
       xmlfile = file.gsub(/mp4$/,"xml")
-      
+
       if File.exists?(xmlfile)
-      
+
         f = File.open(xmlfile)
         doc = Nokogiri::XML(f)
         f.close
 
         doc.remove_namespaces!
-      
+
         metadata = OpenStruct.new
-      
-      
+
+
         # get the things we want
         metadata.channel = doc.xpath("//channel").text
         metadata.descmedium = doc.xpath("//descmedium").text
@@ -67,23 +67,22 @@ command :munger do |c|
           metadata.episode = d.cweek
         end
         metadata.category = doc.xpath("//categories").text.split(",").first
-      
+
         # mediatype 9 is movie, 10 is tv
         metadata.mediatype = doc.xpath("//categories").text.split(",").include?("Films") ? 9 : 10
 
-      
         if metadata.thumbnail and !options.skipart
           url = URI.parse(metadata.thumbnail)
           Net::HTTP.start(url.host, url.port) {|http|
              resp = http.get(url.path)
              tempfile = Tempfile.new('test.jpg')
-             File.open(tempfile.path, 'wb') do |f|
-               f.write resp.body
+             File.open(tempfile.path, 'wb') do |f2|
+               f2.write resp.body
              end
              metadata.thumbnail_file = tempfile unless resp.nil?
            }
         end
-      
+
         if options.convert
           p "HandBrakeCLI -i '#{file}' -o #{file.gsub(/mp4$/, '.m4v')} -Z '#{options.preset}'"
           `HandBrakeCLI -i "#{file}" -o "#{file.gsub(/mp4$/, 'm4v')}" -Z "#{options.preset}"` unless options.dryrun
@@ -93,10 +92,10 @@ command :munger do |c|
           end
           file = file.gsub(/mp4$/, '.m4v')
         end
-      
+
         p "mp4tags -network '#{metadata.channel}' -description '#{metadata.descmedium}' -type #{metadata.mediatype} -genre '#{metadata.category}' -song '#{metadata.title}' -artist '#{metadata.longname}' -show '#{metadata.longname}' -episode #{metadata.episode} -year #{metadata.firstbcast} -season #{metadata.season.to_i} -longdesc '#{metadata.desclong}' -track #{metadata.episode} '#{file}'"
         `mp4tags -network '#{metadata.channel}' -description "#{metadata.descmedium}" -type #{metadata.mediatype} -genre '#{metadata.category}' -song "#{metadata.title}" -artist "#{metadata.longname}" -show "#{metadata.longname}" -episode #{metadata.episode} -year #{metadata.firstbcast} -season #{metadata.season} -longdesc "#{metadata.desclong}" -track #{metadata.episode} "#{file}"` unless options.dryrun
-      
+
         if metadata.thumbnail_file and !options.skipart
           p "mp4art --add #{metadata.thumbnail_file.to_path} '#{file}'"
           `mp4art --add #{metadata.thumbnail_file.to_path} "#{file}"` unless options.dryrun
